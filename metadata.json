@@ -1,0 +1,7 @@
+{
+  "name": "Chinh Phục Nhiệt Học - Vật Lí 12 KNTT",
+  "description": "Trò chơi trắc nghiệm giáo dục tương tác Chương I: Vật lí nhiệt (Vật lí 12 - Kết nối tri thức). Tích hợp quản lý lớp học, ngân hàng câu hỏi tùy biến và lời giải chi tiết.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

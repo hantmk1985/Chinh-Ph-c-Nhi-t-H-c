@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chinh Phục Nhiệt Học - Vật Lí 12 (KNTT)</title>
+  <meta name="description" content="Trò chơi trắc nghiệm giáo dục tương tác Chương I: Vật lí nhiệt - Vật lí 12 Kết nối tri thức.">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #certificate-card, #certificate-card * {
+        visibility: visible;
+      }
+      #certificate-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+
+  <!-- ================= HEADER / THANH ĐIỀU HƯỚNG ================= -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <!-- Logo & Tiêu đề -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="app.showScreen('lobby')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-red-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+          <i class="fa-solid fa-fire-flame-curved text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg text-slate-900 leading-tight">Chinh Phục Nhiệt Học</h1>
+            <span class="text-xs bg-orange-100 text-orange-700 font-semibold px-2 py-0.5 rounded-full border border-orange-200">KNTT 12</span>
+          </div>
+          <p class="text-xs text-slate-500 hidden sm:block">Chương I: Vật lí nhiệt • Bộ sách Kết nối tri thức</p>
+        </div>
+      </div>
+
+      <!-- Navigation tabs -->
+      <nav class="flex items-center gap-1.5 sm:gap-2">
+        <button id="nav-btn-lobby" onclick="app.showScreen('lobby')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-orange-50 text-orange-600 border border-orange-200 flex items-center gap-1.5">
+          <i class="fa-solid fa-gamepad"></i>
+          <span class="hidden md:inline">Trò chơi</span>
+        </button>
+        <button id="nav-btn-classes" onclick="app.showScreen('classes')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-users"></i>
+          <span class="hidden md:inline">Quản lý lớp</span>
+        </button>
+        <button id="nav-btn-questions" onclick="app.showScreen('questions')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-book-open"></i>
+          <span class="hidden md:inline">Ngân hàng câu hỏi</span>
+        </button>
+        <button id="nav-btn-leaderboard" onclick="app.showScreen('leaderboard')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-trophy"></i>
+          <span class="hidden md:inline">Vinh danh</span>
+        </button>
+        <!-- Âm thanh toggle -->
+        <button id="btn-sound-toggle" onclick="app.toggleSound()" class="w-9 h-9 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center transition" title="Bật/Tắt âm thanh">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- ========== SCREEN 1: LOBBY / SẢNH BẮT ĐẦU ========== -->
+    <div id="screen-lobby" class="space-y-6">
+      <!-- Banner giới thiệu -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-600 via-amber-600 to-rose-600 text-white p-6 sm:p-8 shadow-xl shadow-orange-500/10">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-semibold mb-3 border border-white/20">
+            <i class="fa-solid fa-atom"></i> Vật lí 12 - Chương I: Vật lí nhiệt (GDPT 2018)
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2">Thách Thức Trí Tuệ Nhiệt Động Lực Học</h2>
+          <p class="text-orange-100 text-sm sm:text-base leading-relaxed mb-4">
+            Khám phá thế giới phân tử, thang nhiệt Kelvin, phương trình cân bằng nhiệt lượng, nhiệt nóng chảy riêng và nhiệt hóa hơi riêng qua mini-game trắc nghiệm trực quan!
+          </p>
+          <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-orange-100">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> 20s/câu hỏi</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-fire"></i> Chuỗi combo điểm thưởng</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-award"></i> Cấp Giấy khen vinh danh</span>
+          </div>
+        </div>
+        <!-- Trang trí background -->
+        <div class="absolute -right-6 -bottom-10 opacity-15 text-white pointer-events-none">
+          <i class="fa-solid fa-temperature-arrow-up text-[180px]"></i>
+        </div>
+      </div>
+
+      <!-- Khung cấu hình người chơi & chế độ -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Cột 1 & 2: Chọn học sinh & Lớp -->
+        <div class="md:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-sm font-bold">1</span>
+              <h3 class="font-bold text-slate-800 text-base">Thông Tin Học Sinh</h3>
+            </div>
+            <button onclick="app.showScreen('classes')" class="text-xs text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-gear"></i> Quản lý danh sách lớp
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Chọn lớp -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Lớp học:</label>
+              <select id="lobby-class-select" onchange="app.handleClassChange()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                <!-- Sẽ render bằng JS -->
+              </select>
+            </div>
+
+            <!-- Chọn học sinh từ danh sách -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Họ và tên học sinh:</label>
+              <select id="lobby-student-select" onchange="app.handleStudentSelectChange()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                <!-- Sẽ render bằng JS -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Hoặc nhập tên tự do -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-semibold text-slate-600">Hoặc tự nhập tên nếu chưa có trong danh sách:</label>
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="text" id="lobby-custom-name" placeholder="Ví dụ: Nguyễn Văn An..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition font-medium">
+            </div>
+          </div>
+
+          <!-- Chế độ chơi -->
+          <div class="pt-2 border-t border-slate-100">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-7 h-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-sm font-bold">2</span>
+              <h3 class="font-bold text-slate-800 text-base">Chế Độ Chơi & Thời Gian</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="game-mode-options">
+              <button type="button" onclick="app.setGameMode('timed')" id="mode-timed" class="p-3.5 rounded-xl border-2 border-orange-500 bg-orange-50/50 text-left transition relative">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm text-slate-900">Thi đấu 20s</span>
+                  <i class="fa-solid fa-stopwatch text-orange-500"></i>
+                </div>
+                <p class="text-xs text-slate-500">Đếm ngược 20 giây mỗi câu, cộng điểm thời gian & combo.</p>
+              </button>
+              <button type="button" onclick="app.setGameMode('practice')" id="mode-practice" class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-left transition">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm text-slate-900">Luyện tập</span>
+                  <i class="fa-solid fa-graduation-cap text-slate-400"></i>
+                </div>
+                <p class="text-xs text-slate-500">Không áp lực thời gian, đọc kĩ lời giải chi tiết.</p>
+              </button>
+              <button type="button" onclick="app.setGameMode('survival')" id="mode-survival" class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-left transition">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm text-slate-900">Sinh tồn (3 tim)</span>
+                  <i class="fa-solid fa-heart-pulse text-rose-500"></i>
+                </div>
+                <p class="text-xs text-slate-500">Sai quá 3 lần trò chơi sẽ kết thúc sớm.</p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cột 3: Tóm tắt & Nút bắt đầu -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
+          <div>
+            <h3 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-orange-500"></i> Thông Tin Vòng Thi
+            </h3>
+            <div class="space-y-2.5 text-xs text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <div class="flex justify-between py-1 border-b border-slate-200/60">
+                <span>Số lượng câu hỏi:</span>
+                <span class="font-bold text-slate-800" id="lobby-summary-count">20 câu</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-200/60">
+                <span>Chủ đề:</span>
+                <span class="font-bold text-slate-800">Vật lí nhiệt (KNTT 12)</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-200/60">
+                <span>Thang điểm:</span>
+                <span class="font-bold text-slate-800">Hệ 10 & Điểm Combo</span>
+              </div>
+              <div class="flex justify-between py-1">
+                <span>Trộn ngẫu nhiên:</span>
+                <span class="font-bold text-emerald-600">Đã kích hoạt</span>
+              </div>
+            </div>
+
+            <!-- Tùy chọn số lượng câu hỏi -->
+            <div class="mt-4">
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Số câu trong lượt này:</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="app.setQuestionCount(10)" id="qcount-10" class="py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">10 câu</button>
+                <button type="button" onclick="app.setQuestionCount(15)" id="qcount-15" class="py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">15 câu</button>
+                <button type="button" onclick="app.setQuestionCount(20)" id="qcount-20" class="py-1.5 rounded-lg border-2 border-orange-500 bg-orange-50 text-xs font-bold text-orange-600">20 câu</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nút bắt đầu to rõ ràng -->
+          <div>
+            <button onclick="app.startGame()" class="w-full bg-gradient-to-r from-orange-500 via-amber-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-extrabold py-3.5 px-6 rounded-xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 text-base transition transform active:scale-95 animate-pulse-subtle">
+              <i class="fa-solid fa-rocket"></i> Bắt Đầu Chinh Phục
+            </button>
+            <p class="text-[11px] text-slate-400 text-center mt-2">Dữ liệu được lưu an toàn trong trình duyệt của bạn</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 2: GAMEPLAY / MÀN HÌNH CHƠI ========== -->
+    <div id="screen-gameplay" class="hidden space-y-4 max-w-4xl mx-auto">
+      <!-- HUD Thanh trạng thái trên cùng -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <!-- Người chơi & Lớp -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-base border border-orange-200">
+            <i class="fa-solid fa-user-graduate"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-900" id="hud-student-name">Học sinh</div>
+            <div class="text-xs text-slate-500 flex items-center gap-1.5">
+              <span id="hud-class-name">Lớp 12A1</span>
+              <span>•</span>
+              <span id="hud-topic-badge" class="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded-full text-[10px]">Chủ đề</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chỉ số Gameplay: Điểm, Chuỗi, Mạng (nếu có) -->
+        <div class="flex items-center gap-3 sm:gap-4 font-mono-num">
+          <!-- Mạng sinh tồn (nếu ở mode survival) -->
+          <div id="hud-lives-container" class="hidden flex items-center gap-1 text-rose-500 text-base">
+            <i class="fa-solid fa-heart" id="heart-1"></i>
+            <i class="fa-solid fa-heart" id="heart-2"></i>
+            <i class="fa-solid fa-heart" id="heart-3"></i>
+          </div>
+
+          <!-- Combo streak -->
+          <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl text-amber-700 text-xs font-bold">
+            <i class="fa-solid fa-fire text-orange-500 animate-bounce"></i>
+            <span>Combo:</span>
+            <span id="hud-streak" class="text-sm">x0</span>
+          </div>
+
+          <!-- Điểm số hiện tại -->
+          <div class="flex items-center gap-1.5 bg-orange-50 border border-orange-200 px-3.5 py-1 rounded-xl text-orange-700 text-xs font-bold">
+            <i class="fa-solid fa-star text-amber-500"></i>
+            <span>Điểm:</span>
+            <span id="hud-score" class="text-sm">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Khung tiến độ & Đồng hồ đếm ngược -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-semibold px-1">
+          <span class="text-slate-500">Tiến độ: <span id="hud-question-number" class="text-slate-900 font-bold">Câu 1/20</span></span>
+          <span id="hud-timer-text" class="text-orange-600 font-mono-num font-bold flex items-center gap-1">
+            <i class="fa-regular fa-clock"></i> 20s
+          </span>
+        </div>
+        <!-- Progress bar thời gian câu hỏi -->
+        <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+          <div id="hud-timer-bar" class="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-300 rounded-full" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- Khung câu hỏi chính -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <!-- Độ khó & Chủ đề -->
+        <div class="flex items-center justify-between">
+          <span id="question-difficulty-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+            Nhận biết
+          </span>
+          <span id="question-topic-label" class="text-xs text-slate-500 font-medium">
+            Chủ đề: Cấu trúc của chất
+          </span>
+        </div>
+
+        <!-- Nội dung câu hỏi -->
+        <div class="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed min-h-[64px]" id="question-text">
+          Đang tải câu hỏi...
+        </div>
+
+        <!-- 4 Lựa chọn A, B, C, D -->
+        <div class="grid grid-cols-1 gap-3" id="options-container">
+          <!-- Render bằng JS -->
+        </div>
+
+        <!-- Khu vực lời giải chi tiết (hiển thị ngay khi chọn hoặc hết giờ) -->
+        <div id="explanation-container" class="hidden rounded-xl p-4 sm:p-5 border space-y-3 transition">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 font-bold text-sm" id="feedback-status-title">
+              <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+              <span>Chính xác!</span>
+            </div>
+            <button onclick="app.nextQuestion()" id="btn-next-question" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-4 rounded-xl flex items-center gap-1.5 shadow-sm transition">
+              <span>Câu tiếp theo</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-700 leading-relaxed bg-white/70 p-3 rounded-lg border border-slate-200/50" id="explanation-text">
+            Lời giải chi tiết...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 3: RESULTS / BẢNG TỔNG KẾT & VINH DANH ========== -->
+    <div id="screen-results" class="hidden space-y-6 max-w-4xl mx-auto">
+      <!-- Thẻ Giấy khen vinh danh học sinh (có thể in ấn hoặc xuất ảnh) -->
+      <div id="certificate-card" class="relative overflow-hidden bg-white border-4 border-amber-300 rounded-3xl p-6 sm:p-10 shadow-xl text-center space-y-4">
+        <!-- Huy hiệu góc trang trí -->
+        <div class="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none">
+          <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-[10px] py-1 text-center rotate-45 transform translate-x-6 translate-y-3 shadow-md uppercase tracking-wider">
+            Vật lí 12
+          </div>
+        </div>
+
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-amber-400 to-orange-500 text-white text-3xl shadow-lg shadow-orange-500/30">
+          <i class="fa-solid fa-award"></i>
+        </div>
+
+        <div>
+          <div class="text-xs uppercase tracking-widest font-extrabold text-orange-600 mb-1">CHỨNG NHẬN HOÀN THÀNH CHINH PHỤC</div>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight" id="result-student-name">NGUYỄN VĂN AN</h2>
+          <p class="text-sm text-slate-500 font-medium" id="result-class-info">Học sinh lớp 12A1 • Trường THPT</p>
+        </div>
+
+        <!-- Điểm số & Xếp loại -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto pt-2">
+          <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3">
+            <span class="text-[11px] text-slate-500 font-medium block">Điểm hệ 10</span>
+            <span class="text-2xl font-black text-orange-600 font-mono-num" id="result-score-10">9.5/10</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3">
+            <span class="text-[11px] text-slate-500 font-medium block">Đúng / Tổng</span>
+            <span class="text-2xl font-black text-emerald-600 font-mono-num" id="result-correct-total">19/20</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3">
+            <span class="text-[11px] text-slate-500 font-medium block">Tổng điểm thi</span>
+            <span class="text-2xl font-black text-amber-600 font-mono-num" id="result-total-score">2850</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3">
+            <span class="text-[11px] text-slate-500 font-medium block">Danh hiệu</span>
+            <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-lg block mt-1 truncate" id="result-rank-title">Kiện Tướng Nhiệt Học</span>
+          </div>
+        </div>
+
+        <!-- Nhận xét sư phạm -->
+        <div class="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs sm:text-sm text-amber-900 font-medium max-w-2xl mx-auto leading-relaxed" id="result-feedback-message">
+          Đánh giá năng lực của học sinh...
+        </div>
+
+        <!-- Chữ ký ảo của Giáo viên / Hệ thống -->
+        <div class="flex justify-between items-end max-w-xl mx-auto pt-4 text-xs text-slate-500 border-t border-slate-100">
+          <div>
+            <div class="font-semibold text-slate-700">Ngày hoàn thành</div>
+            <div id="result-date-text">14/10/2026</div>
+          </div>
+          <div class="text-center">
+            <div class="font-bold text-orange-600 font-mono-num text-sm">Chương I: Vật lí nhiệt</div>
+            <div class="text-[11px]">Vật lí 12 - GDPT 2018 (KNTT)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nút thao tác sau trận -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button onclick="app.showScreen('lobby')" class="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md transition flex items-center gap-2">
+          <i class="fa-solid fa-rotate-right"></i> Chơi lại lượt mới
+        </button>
+        <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-sm shadow-xs transition flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> In / Xuất Giấy khen
+        </button>
+        <button onclick="app.showScreen('leaderboard')" class="px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-sm shadow-xs transition flex items-center gap-2">
+          <i class="fa-solid fa-list-ol"></i> Bảng thành tích lớp
+        </button>
+      </div>
+
+      <!-- Bảng xem lại toàn bộ câu hỏi và đáp án chi tiết -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-orange-500"></i> Xem Lại Chi Tiết Lượt Thi
+        </h3>
+        <div id="review-list" class="space-y-4">
+          <!-- Render danh sách câu hỏi bằng JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 4: QUẢN LÝ LỚP HỌC (TEACHER VIEW) ========== -->
+    <div id="screen-classes" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-users text-orange-500"></i> Quản Lý Danh Sách Lớp Học
+            </h2>
+            <p class="text-xs text-slate-500">Giáo viên có thể thêm lớp mới hoặc dán danh sách học sinh từ file Excel/Word</p>
+          </div>
+          <button onclick="app.addNewClassPrompt()" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-plus"></i> Tạo Lớp Mới
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Danh sách các lớp -->
+          <div class="space-y-2" id="class-buttons-list">
+            <!-- Render bằng JS -->
+          </div>
+
+          <!-- Chi tiết lớp được chọn & dán danh sách học sinh -->
+          <div class="md:col-span-2 bg-slate-50 rounded-2xl p-5 border border-slate-200/80 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-slate-900 text-base" id="editing-class-name">Lớp: 12A1</h3>
+                <span class="text-xs text-slate-500" id="editing-class-count">0 học sinh</span>
+              </div>
+              <button onclick="app.deleteCurrentClass()" id="btn-delete-class" class="text-xs text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i> Xóa lớp này
+              </button>
+            </div>
+
+            <!-- Textarea dán danh sách -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                Nhập / Dán danh sách học sinh (Mỗi bạn một dòng):
+              </label>
+              <textarea id="class-students-textarea" rows="8" placeholder="Nguyễn Hoàng An&#10;Trần Minh Anh&#10;Lê Tuấn Bảo&#10;Phạm Thu Cúc..." class="w-full bg-white border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-mono leading-relaxed"></textarea>
+              <p class="text-[11px] text-slate-500 mt-1">Hệ thống sẽ tự động lọc số thứ tự đầu dòng và loại bỏ tên trùng lặp.</p>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <button onclick="app.saveCurrentClassStudents()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-5 rounded-xl shadow-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Danh Sách Lớp
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 5: QUẢN LÝ CÂU HỎI (QUESTION BANK) ========== -->
+    <div id="screen-questions" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-book-open text-orange-500"></i> Ngân Hàng Câu Hỏi Nhiệt Học
+            </h2>
+            <p class="text-xs text-slate-500">Bao gồm 20 câu mặc định Vật lí 12 KNTT và cho phép giáo viên tự do bổ sung câu mới</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="app.openNewQuestionModal()" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-plus"></i> Thêm Câu Hỏi Mới
+            </button>
+            <button onclick="app.resetDefaultQuestions()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 px-3.5 rounded-xl transition" title="Khôi phục 20 câu gốc">
+              <i class="fa-solid fa-rotate"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bộ lọc câu hỏi -->
+        <div class="flex flex-wrap items-center gap-3">
+          <input type="text" id="filter-question-search" oninput="app.renderQuestionsList()" placeholder="Tìm kiếm từ khóa câu hỏi..." class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 flex-1 min-w-[200px]">
+          <select id="filter-question-difficulty" onchange="app.renderQuestionsList()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium focus:bg-white focus:outline-none">
+            <option value="all">Tất cả độ khó</option>
+            <option value="Nhận biết">Nhận biết</option>
+            <option value="Thông hiểu">Thông hiểu</option>
+            <option value="Vận dụng">Vận dụng</option>
+            <option value="Vận dụng cao">Vận dụng cao</option>
+          </select>
+        </div>
+
+        <!-- Danh sách câu hỏi hiển thị -->
+        <div id="questions-list" class="space-y-3">
+          <!-- Render bằng JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 6: VINH DANH / LEADERBOARD ========== -->
+    <div id="screen-leaderboard" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-trophy text-amber-500"></i> Bảng Vinh Danh Thành Tích
+            </h2>
+            <p class="text-xs text-slate-500">Lịch sử lượt chơi của các học sinh và bảng xếp hạng điểm số cao nhất</p>
+          </div>
+          <button onclick="app.clearLeaderboardHistory()" class="text-xs text-slate-400 hover:text-rose-600 transition flex items-center gap-1 font-medium">
+            <i class="fa-solid fa-trash-can"></i> Xóa lịch sử
+          </button>
+        </div>
+
+        <div id="leaderboard-table-container" class="overflow-x-auto">
+          <!-- Render bảng bằng JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= MODAL: THÊM CÂU HỎI MỚI ================= -->
+  <div id="modal-add-question" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-circle-question text-orange-500"></i> Thêm Câu Hỏi Mới Vào Ngân Hàng
+        </h3>
+        <button onclick="app.closeNewQuestionModal()" class="w-8 h-8 rounded-full text-slate-400 hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-new-question" onsubmit="app.handleSaveNewQuestion(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Chủ đề:</label>
+            <input type="text" id="new-q-topic" placeholder="Ví dụ: Định luật I NĐTĐH" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Độ khó:</label>
+            <select id="new-q-difficulty" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none font-medium">
+              <option value="Nhận biết">Nhận biết</option>
+              <option value="Thông hiểu">Thông hiểu</option>
+              <option value="Vận dụng">Vận dụng</option>
+              <option value="Vận dụng cao">Vận dụng cao</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nội dung câu hỏi:</label>
+          <textarea id="new-q-content" rows="3" required placeholder="Nhập câu hỏi trắc nghiệm..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- 4 Lựa chọn -->
+        <div class="space-y-2">
+          <label class="block text-xs font-semibold text-slate-700">Các phương án lựa chọn (Chọn tròn đáp án đúng):</label>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center gap-2">
+              <input type="radio" name="new-q-correct" value="0" checked id="correct-opt-0" class="w-4 h-4 text-orange-600 focus:ring-orange-500">
+              <span class="font-bold text-slate-600 w-5">A.</span>
+              <input type="text" id="new-q-opt-0" required placeholder="Nội dung phương án A" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="radio" name="new-q-correct" value="1" id="correct-opt-1" class="w-4 h-4 text-orange-600 focus:ring-orange-500">
+              <span class="font-bold text-slate-600 w-5">B.</span>
+              <input type="text" id="new-q-opt-1" required placeholder="Nội dung phương án B" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="radio" name="new-q-correct" value="2" id="correct-opt-2" class="w-4 h-4 text-orange-600 focus:ring-orange-500">
+              <span class="font-bold text-slate-600 w-5">C.</span>
+              <input type="text" id="new-q-opt-2" required placeholder="Nội dung phương án C" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="radio" name="new-q-correct" value="3" id="correct-opt-3" class="w-4 h-4 text-orange-600 focus:ring-orange-500">
+              <span class="font-bold text-slate-600 w-5">D.</span>
+              <input type="text" id="new-q-opt-3" required placeholder="Nội dung phương án D" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Lời giải chi tiết ngắn gọn:</label>
+          <textarea id="new-q-explanation" rows="2" required placeholder="Giải thích lý do tại sao phương án đó đúng..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="app.closeNewQuestionModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Hủy</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-xs transition">Lưu Câu Hỏi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <strong>Chinh Phục Nhiệt Học</strong> • Mô phỏng giáo dục theo chương trình Vật lí 12 GDPT 2018 (Kết nối tri thức)
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span><i class="fa-solid fa-code text-orange-500"></i> Mã nguồn HTML/JS thuần</span>
+        <span><i class="fa-solid fa-bolt text-amber-500"></i> Không cần server</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= CORE JAVASCRIPT ================= -->
+  <script>
+    /**
+     * DỮ LIỆU CÂU HỎI MẶC ĐỊNH (20 CÂU HỎI CHƯƠNG I: VẬT LÍ NHIỆT - VẬT LÍ 12 KNTT)
+     */
+    const INITIAL_DEFAULT_QUESTIONS = [
+      {
+        id: 'q1',
+        topic: 'Cấu trúc của chất',
+        difficulty: 'Nhận biết',
+        question: 'Theo mô hình động học phân tử, các phân tử cấu tạo nên chất khí có đặc điểm nào sau đây?',
+        options: [
+          'Ở rất gần nhau và dao động xung quanh vị trí cân bằng cố định.',
+          'Ở xa nhau, lực tương tác rất yếu và chuyển động hỗn loạn không ngừng.',
+          'Có trật tự tầm xa và chỉ chuyển động khi bị đốt nóng.',
+          'Luôn đứng yên và chỉ chuyển động khi có ngoại lực tác dụng.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Theo thuyết động học phân tử, ở thể khí các phân tử ở xa nhau, lực tương tác phân tử rất yếu nên chuyển động hỗn loạn không ngừng về mọi phía.'
+      },
+      {
+        id: 'q2',
+        topic: 'Sự chuyển thể',
+        difficulty: 'Nhận biết',
+        question: 'Hiện tượng chất chuyển trực tiếp từ thể rắn sang thể khí mà không qua thể lỏng gọi là gì?',
+        options: [
+          'Sự nóng chảy',
+          'Sự đông đặc',
+          'Sự thăng hoa',
+          'Sự ngưng kết'
+        ],
+        correctAnswer: 2,
+        explanation: 'Sự thăng hoa là quá trình chuyển thể trực tiếp từ thể rắn sang thể hơi/khí mà không qua thể lỏng (ví dụ: băng khô CO2, viên long não).'
+      },
+      {
+        id: 'q3',
+        topic: 'Nội năng',
+        difficulty: 'Thông hiểu',
+        question: 'Nội năng của một vật trong nhiệt động lực học là:',
+        options: [
+          'Tổng động năng và thế năng trọng trường của toàn bộ vật.',
+          'Tổng động năng chuyển động nhiệt và thế năng tương tác của các phân tử cấu tạo nên vật.',
+          'Nhiệt lượng mà vật thu vào khi được đun nóng.',
+          'Năng lượng cơ học mà vật có được khi chuyển động với vận tốc cao.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Nội năng U của vật là tổng động năng chuyển động nhiệt của các phân tử và thế năng tương tác giữa các phân tử cấu tạo nên vật đó (U = Wđ + Wt).'
+      },
+      {
+        id: 'q4',
+        topic: 'Biến đổi nội năng',
+        difficulty: 'Nhận biết',
+        question: 'Có hai cách làm thay đổi nội năng của một vật là:',
+        options: [
+          'Thực hiện công và truyền nhiệt.',
+          'Đốt nóng và làm lạnh.',
+          'Cọ xát và nghiền nát.',
+          'Nén thể tích và dãn thể tích.'
+        ],
+        correctAnswer: 0,
+        explanation: 'Có hai hình thức cơ bản làm thay đổi nội năng của vật là: thực hiện công (có chuyển hóa dạng năng lượng khác thành nội năng) và truyền nhiệt.'
+      },
+      {
+        id: 'q5',
+        topic: 'Định luật I NĐTĐH',
+        difficulty: 'Thông hiểu',
+        question: 'Hệ thức của Định luật I nhiệt động lực học là ΔU = A + Q. Quy ước dấu nào sau đây là ĐÚNG?',
+        options: [
+          'Q > 0: hệ toả nhiệt lượng; A > 0: hệ thực hiện công.',
+          'Q < 0: hệ nhận nhiệt lượng; A < 0: hệ nhận công.',
+          'Q > 0: hệ nhận nhiệt lượng; A > 0: hệ nhận công.',
+          'Q > 0: hệ nhận nhiệt lượng; A > 0: hệ thực hiện công.'
+        ],
+        correctAnswer: 2,
+        explanation: 'Quy ước dấu quốc tế: Hệ nhận nhiệt lượng (Q > 0), hệ nhận công (A > 0); Hệ truyền nhiệt lượng (Q < 0), hệ sinh công (A < 0).'
+      },
+      {
+        id: 'q6',
+        topic: 'Định luật I NĐTĐH',
+        difficulty: 'Vận dụng',
+        question: 'Người ta truyền cho khí trong xi lanh một nhiệt lượng 120 J. Khí nở ra và thực hiện một công 70 J đẩy pít-tông lên. Độ biến thiên nội năng ΔU của khí là:',
+        options: [
+          '190 J',
+          '50 J',
+          '-50 J',
+          '-190 J'
+        ],
+        correctAnswer: 1,
+        explanation: 'Khí nhận nhiệt nên Q = +120 J; khí thực hiện công sinh công nên A = -70 J. Biến thiên nội năng: ΔU = A + Q = -70 + 120 = +50 J.'
+      },
+      {
+        id: 'q7',
+        topic: 'Thang nhiệt độ',
+        difficulty: 'Nhận biết',
+        question: 'Nhiệt độ "Không độ tuyệt đối" (0 K) trong thang nhiệt độ Kelvin tương ứng với bao nhiêu độ trong thang Celsius?',
+        options: [
+          '-273,15 °C',
+          '0 °C',
+          '100 °C',
+          '-100 °C'
+        ],
+        correctAnswer: 0,
+        explanation: 'Liên hệ giữa hai thang: T(K) = t(°C) + 273,15. Khi T = 0 K thì t = -273,15 °C. Đây là nhiệt độ thấp nhất trên lý thuyết.'
+      },
+      {
+        id: 'q8',
+        topic: 'Thang nhiệt độ',
+        difficulty: 'Thông hiểu',
+        question: 'Khi nhiệt độ của một chất lỏng tăng thêm 15 °C thì trong thang Kelvin, nhiệt độ của nó tăng thêm bao nhiêu Kelvin?',
+        options: [
+          '288,15 K',
+          '258,15 K',
+          '15 K',
+          '30 K'
+        ],
+        correctAnswer: 2,
+        explanation: 'Vì mỗi độ chia (1 K) trong thang Kelvin có độ lớn bằng đúng mỗi độ chia (1 °C) trong thang Celsius (ΔT = Δt), nên tăng thêm 15 °C cũng chính là tăng thêm 15 K.'
+      },
+      {
+        id: 'q9',
+        topic: 'Thang nhiệt độ',
+        difficulty: 'Vận dụng',
+        question: 'Ở nhiệt độ nào thì số chỉ trên nhiệt kế Celsius (°C) và nhiệt kế Fahrenheit (°F) có cùng một giá trị số?',
+        options: [
+          '0°',
+          '-40°',
+          '100°',
+          '-273°'
+        ],
+        correctAnswer: 1,
+        explanation: 'Công thức: t(°F) = 1,8.t(°C) + 32. Cho x = 1,8x + 32 => -0,8x = 32 => x = -40°. Vậy -40 °C tương đương -40 °F.'
+      },
+      {
+        id: 'q10',
+        topic: 'Nhiệt dung riêng',
+        difficulty: 'Nhận biết',
+        question: 'Đơn vị đo nhiệt dung riêng (c) trong hệ đơn vị SI là:',
+        options: [
+          'J/kg',
+          'J/(kg.K)',
+          'J/K',
+          'kJ/mol'
+        ],
+        correctAnswer: 1,
+        explanation: 'Từ công thức nhiệt lượng Q = m.c.Δt => c = Q / (m.Δt), nên đơn vị SI là Jun trên kilôgam Kenvin: J/(kg.K) hoặc J/(kg.°C).'
+      },
+      {
+        id: 'q11',
+        topic: 'Nhiệt dung riêng',
+        difficulty: 'Thông hiểu',
+        question: 'Nước có nhiệt dung riêng rất lớn (khoảng 4180 J/(kg.K)). Ý nghĩa thực tế quan trọng nhất của tính chất này là gì?',
+        options: [
+          'Làm cho nước đóng băng rất nhanh vào mùa đông.',
+          'Giúp các đại dương hấp thụ và tỏa nhiệt lượng lớn, đóng vai trò điều hòa khí hậu toàn cầu.',
+          'Khiến cho việc đun sôi nước tốn ít năng lượng nhất trong các chất lỏng.',
+          'Làm cho nước dễ bay hơi ở nhiệt độ thấp.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Nhờ nhiệt dung riêng lớn, lượng nước khổng lồ ở biển và đại dương tích trữ nhiệt khi nắng nóng và tỏa nhiệt chậm khi trời rét, điều hòa khí hậu Trái Đất.'
+      },
+      {
+        id: 'q12',
+        topic: 'Nhiệt dung riêng',
+        difficulty: 'Vận dụng',
+        question: 'Cần cung cấp một nhiệt lượng bao nhiêu để đun nóng 2 kg nước (nhiệt dung riêng c = 4200 J/(kg.K)) từ 25 °C lên đến 85 °C?',
+        options: [
+          '504 kJ',
+          '252 kJ',
+          '714 kJ',
+          '126 kJ'
+        ],
+        correctAnswer: 0,
+        explanation: 'Δt = 85 - 25 = 60 °C. Nhiệt lượng: Q = m.c.Δt = 2 × 4200 × 60 = 504 000 J = 504 kJ.'
+      },
+      {
+        id: 'q13',
+        topic: 'Nhiệt nóng chảy riêng',
+        difficulty: 'Nhận biết',
+        question: 'Đại lượng nhiệt nóng chảy riêng λ của một chất có ý nghĩa là:',
+        options: [
+          'Nhiệt lượng cần để làm nóng 1 kg chất đó tăng thêm 1 °C.',
+          'Nhiệt lượng cần cung cấp để 1 kg chất đó nóng chảy hoàn toàn ở nhiệt độ nóng chảy.',
+          'Nhiệt lượng tỏa ra khi toàn bộ vật thể bị hóa hơi.',
+          'Nhiệt lượng cần để nung chảy một khối chất rắn bất kì.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Nhiệt nóng chảy riêng λ là nhiệt lượng cần cung cấp để 1 kg chất đó nóng chảy hoàn toàn ở nhiệt độ nóng chảy. Công thức: Q = λ.m (đơn vị J/kg).'
+      },
+      {
+        id: 'q14',
+        topic: 'Nhiệt nóng chảy riêng',
+        difficulty: 'Vận dụng',
+        question: 'Nhiệt nóng chảy riêng của nước đá là λ = 3,34.10⁵ J/kg. Nhiệt lượng cần cung cấp để làm nóng chảy hoàn toàn 500 g nước đá ở 0 °C là:',
+        options: [
+          '1,67.10⁵ J',
+          '3,34.10⁵ J',
+          '6,68.10⁵ J',
+          '1,67.10⁸ J'
+        ],
+        correctAnswer: 0,
+        explanation: 'Đổi m = 500 g = 0,5 kg. Áp dụng Q = λ.m = 3,34.10⁵ × 0,5 = 1,67.10⁵ J = 167 kJ.'
+      },
+      {
+        id: 'q15',
+        topic: 'Sự chuyển thể',
+        difficulty: 'Thông hiểu',
+        question: 'Trong suốt quá trình nóng chảy của một khối chất rắn kết tinh tinh khiết (ví dụ nước đá nguyên chất), nhiệt độ của khối chất sẽ biến đổi như thế nào?',
+        options: [
+          'Liên tục tăng đều đặn.',
+          'Liên tục giảm xuống.',
+          'Không đổi cho đến khi chất rắn nóng chảy hoàn toàn.',
+          'Ban đầu tăng nhanh sau đó giảm chậm.'
+        ],
+        correctAnswer: 2,
+        explanation: 'Trong suốt quá trình nóng chảy của chất kết tinh, nhiệt lượng nhận vào dùng để phá vỡ mạng tinh thể (tăng thế năng phân tử) chứ không làm tăng động năng nhiệt phân tử, do đó nhiệt độ không đổi.'
+      },
+      {
+        id: 'q16',
+        topic: 'Nhiệt hóa hơi riêng',
+        difficulty: 'Nhận biết',
+        question: 'Công thức tính nhiệt lượng cần cung cấp để làm hóa hơi hoàn toàn khối lượng m của một chất lỏng ở nhiệt độ sôi là:',
+        options: [
+          'Q = m.c.Δt',
+          'Q = λ.m',
+          'Q = L.m',
+          'Q = A + ΔU'
+        ],
+        correctAnswer: 2,
+        explanation: 'Nhiệt lượng hóa hơi ở nhiệt độ sôi là Q = L.m, trong đó L là nhiệt hóa hơi riêng (đơn vị J/kg).'
+      },
+      {
+        id: 'q17',
+        topic: 'Nhiệt hóa hơi riêng',
+        difficulty: 'Thông hiểu',
+        question: 'Vì sao đối với cùng 1 kg nước, nhiệt hóa hơi riêng (L ≈ 2,26.10⁶ J/kg) lại lớn hơn rất nhiều so với nhiệt nóng chảy riêng (λ ≈ 3,34.10⁵ J/kg)?',
+        options: [
+          'Vì khi hóa hơi, các phân tử nước cần rất ít năng lượng để chuyển động.',
+          'Vì khi hóa hơi, cần năng lượng rất lớn để bẻ gãy hoàn toàn liên kết giữa các phân tử và thực hiện công thắng áp suất ngoài dãn nở thể tích.',
+          'Vì khi nóng chảy thể tích của nước tăng lên hàng nghìn lần.',
+          'Vì nhiệt kế đo ở nhiệt độ sôi nhạy hơn ở nhiệt độ nóng chảy.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Hóa hơi đòi hỏi phá vỡ hoàn toàn lực hút phân tử để chuyển thành chất khí và thể tích dãn nở hàng nghìn lần sinh công lớn, do đó L lớn hơn λ rất nhiều.'
+      },
+      {
+        id: 'q18',
+        topic: 'Ứng dụng thực tế',
+        difficulty: 'Thông hiểu',
+        question: 'Khi bị sốt cao, người ta thường dùng khăn ướt ấm đắp lên trán hoặc lau người. Biện pháp này dựa trên hiện tượng vật lí nào?',
+        options: [
+          'Sự ngưng tụ tỏa nhiệt làm ấm cơ thể.',
+          'Sự bay hơi của nước thu nhiệt lượng từ trán, giúp hạ nhiệt độ cơ thể an toàn.',
+          'Sự đông đặc của mồ hôi ngăn ngừa mất nhiệt.',
+          'Sự dãn nở nhiệt của các mạch máu.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Nước trên khăn bay hơi thu nhiệt hóa hơi trực tiếp từ bề mặt trán và cơ thể người bệnh, giúp truyền nhiệt lượng ra ngoài để hạ sốt.'
+      },
+      {
+        id: 'q19',
+        topic: 'Vận dụng tổng hợp',
+        difficulty: 'Vận dụng',
+        question: 'Một ấm điện công suất 1000 W được dùng để đun 100 g nước đang sôi ở 100 °C hóa hơi hoàn toàn. Biết nhiệt hóa hơi riêng của nước là L = 2,26.10⁶ J/kg. Bỏ qua hao phí nhiệt, thời gian đun là:',
+        options: [
+          '22,6 giây',
+          '226 giây',
+          '2260 giây',
+          '45,2 giây'
+        ],
+        correctAnswer: 1,
+        explanation: 'Q = L.m = 2,26.10⁶ × 0,1 = 226 000 J. Thời gian: t = Q / P = 226 000 / 1000 = 226 giây (khoảng 3 phút 46 giây).'
+      },
+      {
+        id: 'q20',
+        topic: 'Vận dụng cao',
+        difficulty: 'Vận dụng cao',
+        question: 'Thả 100 g nước đá ở 0 °C vào cốc chứa 400 g nước ở 40 °C. Bỏ qua trao đổi nhiệt với môi trường. Cho c_nước = 4200 J/(kg.K), λ_đá = 3,36.10⁵ J/kg. Sau khi cân bằng nhiệt, trạng thái trong cốc là:',
+        options: [
+          'Nước đá chưa tan hết, nhiệt độ của cốc là 0 °C.',
+          'Nước đá tan hết hoàn toàn, nhiệt độ cân bằng xấp xỉ 16 °C.',
+          'Nước đá tan hết hoàn toàn, nhiệt độ cân bằng là 20 °C.',
+          'Nước đá tan một nửa, nhiệt độ cốc là 10 °C.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Nhiệt lượng làm tan 100g đá: Q1 = 0,1 × 3,36.10⁵ = 33 600 J. Nhiệt lượng 400g nước tỏa ra về 0°C: 0,4 × 4200 × 40 = 67 200 J > Q1 => Đá tan hết. Phương trình: 33600 + 0,1×4200×t = 0,4×4200×(40-t) => 2100×t = 33600 => t = 16 °C.'
+      }
+    ];
+
+    /**
+     * DỮ LIỆU LỚP HỌC MẪU BAN ĐẦU
+     */
+    const INITIAL_DEFAULT_CLASSES = [
+      {
+        id: 'class-12a1',
+        name: '12A1',
+        students: [
+          'Nguyễn Hoàng An',
+          'Trần Minh Anh',
+          'Lê Tuấn Bảo',
+          'Phạm Thu Cúc',
+          'Vũ Tiến Đạt',
+          'Đặng Thùy Dương',
+          'Bùi Gia Huy',
+          'Đỗ Mai Khanh',
+          'Ngô Hoàng Long',
+          'Lý Thanh Mai'
+        ]
+      },
+      {
+        id: 'class-12a2',
+        name: '12A2',
+        students: [
+          'Trịnh Quốc Bảo',
+          'Võ Hải Đăng',
+          'Hà Thảo My',
+          'Nguyễn Nhật Nam',
+          'Phan Khánh Linh'
+        ]
+      },
+      {
+        id: 'class-12-ly',
+        name: '12 Chuyên Vật Lí',
+        students: [
+          'Lê Quang Huy',
+          'Nguyễn Minh Khôi',
+          'Trần Phương Linh',
+          'Phạm Tuấn Kiệt'
+        ]
+      }
+    ];
+
+    /**
+     * ÂM THANH BẰNG WEB AUDIO API (KHÔNG CẦN FILE MP3 NGOÀI)
+     */
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx && typeof AudioContext !== 'undefined') {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCorrect() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [659.25, 880].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + i * 0.1);
+          gain.gain.setValueAtTime(0.18, now + i * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.1);
+          osc.stop(now + i * 0.1 + 0.3);
+        });
+      }
+      playWrong() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+      playTick() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.03);
+      }
+      playVictory() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.4);
+        });
+      }
+    }
+
+    /**
+     * BỘ ĐIỀU KHIỂN CHÍNH CỦA TRÒ CHƠI (APPLICATION CONTROLLER)
+     */
+    class QuizApp {
+      constructor() {
+        this.sound = new SoundFX();
+        this.questions = this.loadQuestions();
+        this.classes = this.loadClasses();
+        this.history = this.loadHistory();
+
+        this.selectedClassId = this.classes[0]?.id || '';
+        this.selectedStudentName = '';
+        this.gameMode = 'timed'; // 'timed' | 'practice' | 'survival'
+        this.questionCount = 20;
+
+        // Trạng thái lượt chơi
+        this.gameSession = {
+          activeQuestions: [],
+          currentIndex: 0,
+          score: 0,
+          streak: 0,
+          maxStreak: 0,
+          lives: 3,
+          timeLeft: 20,
+          timerInterval: null,
+          hasAnswered: false,
+          answers: [],
+          startTime: 0
+        };
+
+        this.initUI();
+      }
+
+      // LocalStorage Helper
+      loadQuestions() {
+        try {
+          const raw = localStorage.getItem('html_cpnh_questions');
+          if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        return [...INITIAL_DEFAULT_QUESTIONS];
+      }
+      saveQuestions() {
+        localStorage.setItem('html_cpnh_questions', JSON.stringify(this.questions));
+      }
+      loadClasses() {
+        try {
+          const raw = localStorage.getItem('html_cpnh_classes');
+          if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        return [...INITIAL_DEFAULT_CLASSES];
+      }
+      saveClasses() {
+        localStorage.setItem('html_cpnh_classes', JSON.stringify(this.classes));
+      }
+      loadHistory() {
+        try {
+          const raw = localStorage.getItem('html_cpnh_history');
+          if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        return [];
+      }
+      saveHistory() {
+        localStorage.setItem('html_cpnh_history', JSON.stringify(this.history));
+      }
+
+      // Khởi tạo giao diện ban đầu
+      initUI() {
+        this.renderClassSelect();
+        this.renderQuestionsList();
+        this.renderClassesManager();
+        this.renderLeaderboard();
+      }
+
+      // Hiển thị màn hình
+      showScreen(screenName) {
+        ['lobby', 'gameplay', 'results', 'classes', 'questions', 'leaderboard'].forEach(s => {
+          const el = document.getElementById(`screen-${s}`);
+          if (el) el.classList.add('hidden');
+          const btn = document.getElementById(`nav-btn-${s}`);
+          if (btn) {
+            btn.classList.remove('bg-orange-50', 'text-orange-600', 'border', 'border-orange-200');
+            btn.classList.add('text-slate-600');
+          }
+        });
+
+        const targetScreen = document.getElementById(`screen-${screenName}`);
+        if (targetScreen) targetScreen.classList.remove('hidden');
+
+        const activeBtn = document.getElementById(`nav-btn-${screenName}`);
+        if (activeBtn) {
+          activeBtn.classList.remove('text-slate-600');
+          activeBtn.classList.add('bg-orange-50', 'text-orange-600', 'border', 'border-orange-200');
+        }
+
+        // Dừng timer nếu chuyển màn hình
+        if (screenName !== 'gameplay' && this.gameSession.timerInterval) {
+          clearInterval(this.gameSession.timerInterval);
+        }
+      }
+
+      toggleSound() {
+        this.sound.enabled = !this.sound.enabled;
+        const btn = document.getElementById('btn-sound-toggle');
+        if (btn) {
+          btn.innerHTML = this.sound.enabled 
+            ? '<i class="fa-solid fa-volume-high text-orange-600"></i>' 
+            : '<i class="fa-solid fa-volume-xmark text-slate-400"></i>';
+        }
+      }
+
+      // Quản lý lớp & học sinh ở màn Lobby
+      renderClassSelect() {
+        const select = document.getElementById('lobby-class-select');
+        if (!select) return;
+        select.innerHTML = this.classes.map(c => `
+          <option value="${c.id}" ${c.id === this.selectedClassId ? 'selected' : ''}>${c.name} (${c.students.length} HS)</option>
+        `).join('');
+
+        this.handleClassChange();
+      }
+
+      handleClassChange() {
+        const select = document.getElementById('lobby-class-select');
+        if (!select) return;
+        this.selectedClassId = select.value;
+        const currentClass = this.classes.find(c => c.id === this.selectedClassId);
+
+        const studentSelect = document.getElementById('lobby-student-select');
+        if (!studentSelect) return;
+
+        if (currentClass && currentClass.students.length > 0) {
+          studentSelect.innerHTML = currentClass.students.map((st, i) => `
+            <option value="${st}" ${i === 0 ? 'selected' : ''}>${st}</option>
+          `).join('');
+          this.selectedStudentName = currentClass.students[0];
+        } else {
+          studentSelect.innerHTML = `<option value="">(Chưa có danh sách - Nhập tên bên dưới)</option>`;
+          this.selectedStudentName = '';
+        }
+      }
+
+      handleStudentSelectChange() {
+        const studentSelect = document.getElementById('lobby-student-select');
+        if (studentSelect) {
+          this.selectedStudentName = studentSelect.value;
+          // Clear custom input
+          const customInput = document.getElementById('lobby-custom-name');
+          if (customInput) customInput.value = '';
+        }
+      }
+
+      setGameMode(mode) {
+        this.gameMode = mode;
+        ['timed', 'practice', 'survival'].forEach(m => {
+          const btn = document.getElementById(`mode-${m}`);
+          if (btn) {
+            if (m === mode) {
+              btn.className = 'p-3.5 rounded-xl border-2 border-orange-500 bg-orange-50/50 text-left transition relative';
+            } else {
+              btn.className = 'p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-left transition';
+            }
+          }
+        });
+      }
+
+      setQuestionCount(count) {
+        this.questionCount = Math.min(count, this.questions.length);
+        [10, 15, 20].forEach(n => {
+          const btn = document.getElementById(`qcount-${n}`);
+          if (btn) {
+            if (n === count) {
+              btn.className = 'py-1.5 rounded-lg border-2 border-orange-500 bg-orange-50 text-xs font-bold text-orange-600';
+            } else {
+              btn.className = 'py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50';
+            }
+          }
+        });
+        document.getElementById('lobby-summary-count').innerText = `${this.questionCount} câu`;
+      }
+
+      // BẮT ĐẦU VÒNG CHƠI
+      startGame() {
+        const customName = document.getElementById('lobby-custom-name').value.trim();
+        const studentName = customName || this.selectedStudentName || 'Học sinh';
+        const currentClass = this.classes.find(c => c.id === this.selectedClassId);
+        const className = currentClass ? currentClass.name : '12A';
+
+        // Trộn ngẫu nhiên câu hỏi
+        const shuffled = [...this.questions].sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, Math.min(this.questionCount, shuffled.length));
+
+        this.gameSession = {
+          studentName,
+          className,
+          activeQuestions: selected,
+          currentIndex: 0,
+          score: 0,
+          streak: 0,
+          maxStreak: 0,
+          lives: 3,
+          timeLeft: 20,
+          timerInterval: null,
+          hasAnswered: false,
+          answers: [],
+          startTime: Date.now()
+        };
+
+        // Cập nhật HUD
+        document.getElementById('hud-student-name').innerText = studentName;
+        document.getElementById('hud-class-name').innerText = `Lớp: ${className}`;
+        document.getElementById('hud-score').innerText = '0';
+        document.getElementById('hud-streak').innerText = 'x0';
+
+        const livesContainer = document.getElementById('hud-lives-container');
+        if (this.gameMode === 'survival') {
+          livesContainer.classList.remove('hidden');
+          this.updateLivesDisplay();
+        } else {
+          livesContainer.classList.add('hidden');
+        }
+
+        this.showScreen('gameplay');
+        this.loadCurrentQuestion();
+      }
+
+      updateLivesDisplay() {
+        for (let i = 1; i <= 3; i++) {
+          const heart = document.getElementById(`heart-${i}`);
+          if (heart) {
+            if (i <= this.gameSession.lives) {
+              heart.className = 'fa-solid fa-heart text-rose-500';
+            } else {
+              heart.className = 'fa-regular fa-heart text-slate-300';
+            }
+          }
+        }
+      }
+
+      loadCurrentQuestion() {
+        if (this.gameSession.currentIndex >= this.gameSession.activeQuestions.length) {
+          this.finishGame();
+          return;
+        }
+
+        const q = this.gameSession.activeQuestions[this.gameSession.currentIndex];
+        this.gameSession.hasAnswered = false;
+
+        // UI Header
+        document.getElementById('hud-question-number').innerText = `Câu ${this.gameSession.currentIndex + 1}/${this.gameSession.activeQuestions.length}`;
+        document.getElementById('hud-topic-badge').innerText = q.topic;
+        document.getElementById('question-difficulty-badge').innerText = q.difficulty;
+        document.getElementById('question-topic-label').innerText = `Chủ đề: ${q.topic}`;
+        document.getElementById('question-text').innerText = q.question;
+
+        // Màu cho độ khó
+        const diffColors = {
+          'Nhận biết': 'bg-blue-50 text-blue-700 border-blue-200',
+          'Thông hiểu': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          'Vận dụng': 'bg-amber-50 text-amber-700 border-amber-200',
+          'Vận dụng cao': 'bg-purple-50 text-purple-700 border-purple-200'
+        };
+        document.getElementById('question-difficulty-badge').className = `text-xs font-bold px-2.5 py-1 rounded-lg border ${diffColors[q.difficulty] || 'bg-slate-50 text-slate-700'}`;
+
+        // Ẩn bảng lời giải
+        document.getElementById('explanation-container').classList.add('hidden');
+
+        // Render 4 đáp án
+        const optContainer = document.getElementById('options-container');
+        const labels = ['A', 'B', 'C', 'D'];
+        optContainer.innerHTML = q.options.map((opt, idx) => `
+          <button type="button" onclick="app.selectOption(${idx})" id="opt-btn-${idx}" class="w-full text-left p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 hover:border-orange-200 transition flex items-start gap-3 group">
+            <span class="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-xs text-slate-700 group-hover:bg-orange-500 group-hover:text-white group-hover:border-orange-500 transition shadow-2xs">${labels[idx]}</span>
+            <span class="text-sm sm:text-base text-slate-800 font-medium leading-snug flex-1">${opt}</span>
+          </button>
+        `).join('');
+
+        // Cấu hình Timer
+        if (this.gameSession.timerInterval) clearInterval(this.gameSession.timerInterval);
+
+        if (this.gameMode === 'practice') {
+          document.getElementById('hud-timer-text').innerHTML = `<i class="fa-solid fa-infinity"></i> Tự do`;
+          document.getElementById('hud-timer-bar').style.width = '100%';
+        } else {
+          this.gameSession.timeLeft = 20;
+          this.updateTimerBar();
+
+          this.gameSession.timerInterval = setInterval(() => {
+            this.gameSession.timeLeft -= 1;
+            this.updateTimerBar();
+
+            if (this.gameSession.timeLeft <= 5 && this.gameSession.timeLeft > 0) {
+              this.sound.playTick();
+            }
+
+            if (this.gameSession.timeLeft <= 0) {
+              clearInterval(this.gameSession.timerInterval);
+              this.handleTimeout();
+            }
+          }, 1000);
+        }
+      }
+
+      updateTimerBar() {
+        const percentage = Math.max(0, (this.gameSession.timeLeft / 20) * 100);
+        document.getElementById('hud-timer-bar').style.width = `${percentage}%`;
+        document.getElementById('hud-timer-text').innerHTML = `<i class="fa-regular fa-clock"></i> ${this.gameSession.timeLeft}s`;
+      }
+
+      selectOption(selectedIndex) {
+        if (this.gameSession.hasAnswered) return;
+        this.gameSession.hasAnswered = true;
+        if (this.gameSession.timerInterval) clearInterval(this.gameSession.timerInterval);
+
+        const q = this.gameSession.activeQuestions[this.gameSession.currentIndex];
+        const isCorrect = (selectedIndex === q.correctAnswer);
+
+        // Lưu câu trả lời
+        this.gameSession.answers.push({
+          question: q.question,
+          options: q.options,
+          topic: q.topic,
+          userAnswer: selectedIndex,
+          correctAnswer: q.correctAnswer,
+          isCorrect,
+          explanation: q.explanation
+        });
+
+        // Điểm & Streak
+        if (isCorrect) {
+          this.sound.playCorrect();
+          this.gameSession.streak += 1;
+          if (this.gameSession.streak > this.gameSession.maxStreak) {
+            this.gameSession.maxStreak = this.gameSession.streak;
+          }
+
+          // Tính điểm: Cơ bản 100 + Thưởng thời gian + Nhân chuỗi
+          const basePoints = q.difficulty === 'Vận dụng cao' ? 200 : (q.difficulty === 'Vận dụng' ? 150 : 100);
+          const timeBonus = (this.gameMode !== 'practice') ? Math.round((this.gameSession.timeLeft / 20) * 50) : 0;
+          const streakMultiplier = 1 + Math.min(1.0, (this.gameSession.streak - 1) * 0.1);
+          const earned = Math.round((basePoints + timeBonus) * streakMultiplier);
+
+          this.gameSession.score += earned;
+        } else {
+          this.sound.playWrong();
+          this.gameSession.streak = 0;
+
+          if (this.gameMode === 'survival') {
+            this.gameSession.lives -= 1;
+            this.updateLivesDisplay();
+            if (this.gameSession.lives <= 0) {
+              setTimeout(() => {
+                this.finishGame();
+              }, 1200);
+            }
+          }
+        }
+
+        // Cập nhật HUD
+        document.getElementById('hud-score').innerText = this.gameSession.score;
+        document.getElementById('hud-streak').innerText = `x${this.gameSession.streak}`;
+
+        // Cập nhật màu nút đáp án
+        for (let i = 0; i < 4; i++) {
+          const btn = document.getElementById(`opt-btn-${i}`);
+          if (!btn) continue;
+          btn.disabled = true;
+
+          if (i === q.correctAnswer) {
+            btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 transition flex items-start gap-3';
+            btn.querySelector('span').className = 'w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-xs';
+          } else if (i === selectedIndex && !isCorrect) {
+            btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-900 transition flex items-start gap-3';
+            btn.querySelector('span').className = 'w-7 h-7 rounded-lg bg-rose-500 text-white flex items-center justify-center font-bold text-xs shadow-xs';
+          } else {
+            btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-slate-50 opacity-50 flex items-start gap-3';
+          }
+        }
+
+        // Hiển thị khung lời giải chi tiết
+        this.showExplanation(isCorrect, q.explanation);
+      }
+
+      handleTimeout() {
+        if (this.gameSession.hasAnswered) return;
+        this.gameSession.hasAnswered = true;
+
+        const q = this.gameSession.activeQuestions[this.gameSession.currentIndex];
+        this.sound.playWrong();
+        this.gameSession.streak = 0;
+
+        this.gameSession.answers.push({
+          question: q.question,
+          options: q.options,
+          topic: q.topic,
+          userAnswer: null, // Hết giờ
+          correctAnswer: q.correctAnswer,
+          isCorrect: false,
+          explanation: q.explanation
+        });
+
+        if (this.gameMode === 'survival') {
+          this.gameSession.lives -= 1;
+          this.updateLivesDisplay();
+        }
+
+        // Đánh dấu đáp án đúng
+        for (let i = 0; i < 4; i++) {
+          const btn = document.getElementById(`opt-btn-${i}`);
+          if (!btn) continue;
+          btn.disabled = true;
+          if (i === q.correctAnswer) {
+            btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 flex items-start gap-3';
+          } else {
+            btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-slate-50 opacity-40 flex items-start gap-3';
+          }
+        }
+
+        this.showExplanation(false, `Hết thời gian trả lời! ${q.explanation}`);
+      }
+
+      showExplanation(isCorrect, explanation) {
+        const box = document.getElementById('explanation-container');
+        const title = document.getElementById('feedback-status-title');
+        const text = document.getElementById('explanation-text');
+
+        if (isCorrect) {
+          box.className = 'rounded-xl p-4 sm:p-5 border border-emerald-200 bg-emerald-50/70 space-y-3';
+          title.className = 'flex items-center gap-2 font-bold text-sm text-emerald-800';
+          title.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 text-base"></i><span>Chính xác tuyệt đối!</span>';
+        } else {
+          box.className = 'rounded-xl p-4 sm:p-5 border border-rose-200 bg-rose-50/70 space-y-3';
+          title.className = 'flex items-center gap-2 font-bold text-sm text-rose-800';
+          title.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-600 text-base"></i><span>Chưa chính xác! Hãy quan sát lời giải:</span>';
+        }
+
+        text.innerHTML = `<strong>Lời giải từ Giáo viên:</strong> ${explanation}`;
+        box.classList.remove('hidden');
+      }
+
+      nextQuestion() {
+        this.gameSession.currentIndex += 1;
+        this.loadCurrentQuestion();
+      }
+
+      // KẾT THÚC TRÒ CHƠI
+      finishGame() {
+        if (this.gameSession.timerInterval) clearInterval(this.gameSession.timerInterval);
+
+        const correctCount = this.gameSession.answers.filter(a => a.isCorrect).length;
+        const total = this.gameSession.answers.length || 1;
+        const scoreOutOf10 = (Math.round((correctCount / total) * 10 * 10) / 10).toFixed(1);
+
+        // Đánh giá năng lực
+        let rankTitle = 'Người Khám Phá';
+        let feedback = '';
+        if (scoreOutOf10 >= 9.0) {
+          rankTitle = 'Kiện Tướng Nhiệt Học 🏆';
+          feedback = 'Xuất sắc tuyệt đối! Em nắm rất chắc bản chất vật lí nhiệt, hiểu rõ các quy luật chuyển thể và định luật I NĐTĐH!';
+        } else if (scoreOutOf10 >= 8.0) {
+          rankTitle = 'Nhà Vật Lí Tài Năng 🥇';
+          feedback = 'Rất tốt! Em hiểu rõ các khái niệm, công thức và giải bài tập một cách chính xác.';
+        } else if (scoreOutOf10 >= 6.5) {
+          rankTitle = 'Nhà Nghiên Cứu Triển Vọng 🥈';
+          feedback = 'Khá tốt! Hãy chú ý hơn các bài toán vận dụng quy ước dấu trong định luật I và bài toán trao đổi nhiệt.';
+        } else {
+          rankTitle = 'Thực Tập Sinh Vật Lí 🥉';
+          feedback = 'Cần ôn tập thêm! Hãy xem kĩ lại các câu sai trong danh sách bên dưới và đọc lại SGK KNTT 12 nhé.';
+        }
+
+        // Cập nhật kết quả
+        document.getElementById('result-student-name').innerText = this.gameSession.studentName.toUpperCase();
+        document.getElementById('result-class-info').innerText = `Học sinh lớp ${this.gameSession.className} • Bộ sách Kết nối tri thức`;
+        document.getElementById('result-score-10').innerText = `${scoreOutOf10}/10`;
+        document.getElementById('result-correct-total').innerText = `${correctCount}/${total}`;
+        document.getElementById('result-total-score').innerText = this.gameSession.score;
+        document.getElementById('result-rank-title').innerText = rankTitle;
+        document.getElementById('result-feedback-message').innerText = feedback;
+        document.getElementById('result-date-text').innerText = new Date().toLocaleDateString('vi-VN');
+
+        // Bắn pháo hoa ăn mừng nếu đạt điểm cao
+        if (scoreOutOf10 >= 7.0 && typeof confetti === 'function') {
+          this.sound.playVictory();
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+
+        // Lưu vào lịch sử & vinh danh
+        this.history.unshift({
+          id: 'res_' + Date.now(),
+          studentName: this.gameSession.studentName,
+          className: this.gameSession.className,
+          scoreOutOf10,
+          totalScore: this.gameSession.score,
+          correctCount,
+          total,
+          rankTitle,
+          date: new Date().toLocaleDateString('vi-VN') + ' ' + new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})
+        });
+        this.saveHistory();
+        this.renderLeaderboard();
+
+        // Render xem lại danh sách câu hỏi
+        this.renderReviewList();
+        this.showScreen('results');
+      }
+
+      renderReviewList() {
+        const container = document.getElementById('review-list');
+        if (!container) return;
+        const labels = ['A', 'B', 'C', 'D'];
+
+        container.innerHTML = this.gameSession.answers.map((item, idx) => {
+          const userChoiceText = item.userAnswer !== null ? `${labels[item.userAnswer]}. ${item.options[item.userAnswer]}` : 'Hết giờ (Không chọn)';
+          const correctChoiceText = `${labels[item.correctAnswer]}. ${item.options[item.correctAnswer]}`;
+          
+          return `
+            <div class="p-4 rounded-xl border ${item.isCorrect ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'} space-y-2">
+              <div class="flex items-start justify-between gap-3">
+                <span class="font-bold text-sm text-slate-900">Câu ${idx + 1}: ${item.question}</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${item.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} shrink-0">
+                  ${item.isCorrect ? '<i class="fa-solid fa-check"></i> Đúng' : '<i class="fa-solid fa-xmark"></i> Sai'}
+                </span>
+              </div>
+              <div class="text-xs space-y-1">
+                <div><span class="text-slate-500">Em đã chọn:</span> <span class="font-semibold ${item.isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${userChoiceText}</span></div>
+                ${!item.isCorrect ? `<div><span class="text-slate-500">Đáp án chính xác:</span> <span class="font-bold text-emerald-700">${correctChoiceText}</span></div>` : ''}
+                <div class="bg-white p-2.5 rounded-lg border border-slate-200/60 text-slate-700 mt-1">
+                  <strong>Giải thích:</strong> ${item.explanation}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // QUẢN LÝ LỚP HỌC (TEACHER VIEW)
+      renderClassesManager() {
+        const listContainer = document.getElementById('class-buttons-list');
+        if (!listContainer) return;
+
+        listContainer.innerHTML = this.classes.map(c => `
+          <button type="button" onclick="app.selectClassToManage('${c.id}')" class="w-full text-left p-3 rounded-xl border ${c.id === this.selectedClassId ? 'border-orange-500 bg-orange-50 font-bold text-orange-900' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-800'} transition flex items-center justify-between">
+            <span>${c.name}</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">${c.students.length} HS</span>
+          </button>
+        `).join('');
+
+        const current = this.classes.find(c => c.id === this.selectedClassId) || this.classes[0];
+        if (current) {
+          document.getElementById('editing-class-name').innerText = `Lớp: ${current.name}`;
+          document.getElementById('editing-class-count').innerText = `${current.students.length} học sinh`;
+          document.getElementById('class-students-textarea').value = current.students.join('\n');
+        }
+      }
+
+      selectClassToManage(classId) {
+        this.selectedClassId = classId;
+        this.renderClassesManager();
+      }
+
+      addNewClassPrompt() {
+        const name = prompt('Nhập tên lớp học mới (Ví dụ: 12A3, 12 Tin, ...):');
+        if (!name || !name.trim()) return;
+        const newClass = {
+          id: 'class-' + Date.now(),
+          name: name.trim(),
+          students: []
+        };
+        this.classes.push(newClass);
+        this.selectedClassId = newClass.id;
+        this.saveClasses();
+        this.renderClassSelect();
+        this.renderClassesManager();
+      }
+
+      deleteCurrentClass() {
+        if (this.classes.length <= 1) {
+          alert('Cần giữ lại ít nhất 1 lớp học.');
+          return;
+        }
+        if (!confirm('Bạn có chắc chắn muốn xóa lớp này không?')) return;
+        this.classes = this.classes.filter(c => c.id !== this.selectedClassId);
+        this.selectedClassId = this.classes[0].id;
+        this.saveClasses();
+        this.renderClassSelect();
+        this.renderClassesManager();
+      }
+
+      saveCurrentClassStudents() {
+        const current = this.classes.find(c => c.id === this.selectedClassId);
+        if (!current) return;
+        const raw = document.getElementById('class-students-textarea').value;
+        const lines = raw.split('\n');
+        const students = [];
+        const seen = new Set();
+
+        lines.forEach(line => {
+          const clean = line.replace(/^[\s\d]+[.)\-\s]+/, '').trim();
+          if (clean && !seen.has(clean.toLowerCase())) {
+            seen.add(clean.toLowerCase());
+            students.push(clean);
+          }
+        });
+
+        current.students = students;
+        this.saveClasses();
+        this.renderClassSelect();
+        this.renderClassesManager();
+        alert(`Đã lưu thành công danh sách ${students.length} học sinh cho lớp ${current.name}!`);
+      }
+
+      // QUẢN LÝ CÂU HỎI
+      renderQuestionsList() {
+        const container = document.getElementById('questions-list');
+        if (!container) return;
+        const search = (document.getElementById('filter-question-search')?.value || '').toLowerCase();
+        const diffFilter = document.getElementById('filter-question-difficulty')?.value || 'all';
+
+        const filtered = this.questions.filter(q => {
+          const matchText = q.question.toLowerCase().includes(search) || q.topic.toLowerCase().includes(search);
+          const matchDiff = diffFilter === 'all' || q.difficulty === diffFilter;
+          return matchText && matchDiff;
+        });
+
+        const labels = ['A', 'B', 'C', 'D'];
+        container.innerHTML = filtered.map((q, idx) => `
+          <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition space-y-2">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">${idx + 1}</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-orange-100 text-orange-700">${q.topic}</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${q.difficulty}</span>
+              </div>
+              <button onclick="app.deleteQuestion('${q.id}')" class="text-slate-400 hover:text-rose-600 text-xs transition" title="Xóa câu hỏi">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+            <div class="text-sm font-bold text-slate-800">${q.question}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-slate-600 pt-1">
+              ${q.options.map((opt, i) => `
+                <div class="${i === q.correctAnswer ? 'font-bold text-emerald-700 bg-emerald-50/80 p-1.5 rounded' : 'p-1.5'}">
+                  ${labels[i]}. ${opt} ${i === q.correctAnswer ? '<i class="fa-solid fa-check text-emerald-600 ml-1"></i>' : ''}
+                </div>
+              `).join('')}
+            </div>
+            <div class="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">
+              <span class="font-semibold text-slate-700">Lời giải:</span> ${q.explanation}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      openNewQuestionModal() {
+        document.getElementById('modal-add-question').classList.remove('hidden');
+      }
+      closeNewQuestionModal() {
+        document.getElementById('modal-add-question').classList.add('hidden');
+      }
+
+      handleSaveNewQuestion(event) {
+        event.preventDefault();
+        const topic = document.getElementById('new-q-topic').value.trim();
+        const difficulty = document.getElementById('new-q-difficulty').value;
+        const content = document.getElementById('new-q-content').value.trim();
+        const options = [
+          document.getElementById('new-q-opt-0').value.trim(),
+          document.getElementById('new-q-opt-1').value.trim(),
+          document.getElementById('new-q-opt-2').value.trim(),
+          document.getElementById('new-q-opt-3').value.trim(),
+        ];
+        const correctRadio = document.querySelector('input[name="new-q-correct"]:checked');
+        const correctAnswer = correctRadio ? parseInt(correctRadio.value, 10) : 0;
+        const explanation = document.getElementById('new-q-explanation').value.trim();
+
+        const newQ = {
+          id: 'custom-' + Date.now(),
+          topic,
+          difficulty,
+          question: content,
+          options,
+          correctAnswer,
+          explanation,
+          isCustom: true
+        };
+
+        this.questions.unshift(newQ);
+        this.saveQuestions();
+        this.renderQuestionsList();
+        this.closeNewQuestionModal();
+        document.getElementById('form-new-question').reset();
+        alert('Đã thêm thành công câu hỏi mới vào ngân hàng!');
+      }
+
+      deleteQuestion(id) {
+        if (!confirm('Bạn có chắc muốn xóa câu hỏi này khỏi ngân hàng không?')) return;
+        this.questions = this.questions.filter(q => q.id !== id);
+        this.saveQuestions();
+        this.renderQuestionsList();
+      }
+
+      resetDefaultQuestions() {
+        if (!confirm('Khôi phục lại danh sách 20 câu hỏi chuẩn ban đầu?')) return;
+        this.questions = [...INITIAL_DEFAULT_QUESTIONS];
+        this.saveQuestions();
+        this.renderQuestionsList();
+      }
+
+      // BẢNG VINH DANH / LEADERBOARD
+      renderLeaderboard() {
+        const container = document.getElementById('leaderboard-table-container');
+        if (!container) return;
+
+        if (this.history.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-10 text-slate-400 text-xs">
+              <i class="fa-solid fa-trophy text-3xl mb-2 text-slate-300"></i>
+              <p>Chưa có lượt thi nào được ghi nhận. Hãy bắt đầu lượt chơi đầu tiên!</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-3">Học sinh</th>
+                <th class="py-3 px-3">Lớp</th>
+                <th class="py-3 px-3">Điểm số</th>
+                <th class="py-3 px-3">Đúng</th>
+                <th class="py-3 px-3">Danh hiệu</th>
+                <th class="py-3 px-3 text-right">Thời gian</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${this.history.map((h, i) => `
+                <tr class="hover:bg-slate-50/60 transition">
+                  <td class="py-3 px-3 font-bold text-slate-900 flex items-center gap-2">
+                    ${i === 0 ? '<span class="text-amber-500 font-extrabold">🥇</span>' : (i === 1 ? '<span class="text-slate-400 font-bold">🥈</span>' : (i === 2 ? '<span class="text-amber-700 font-bold">🥉</span>' : `<span class="text-slate-400 font-mono text-[11px]">${i + 1}</span>`))}
+                    ${h.studentName}
+                  </td>
+                  <td class="py-3 px-3 text-slate-600 font-medium">${h.className}</td>
+                  <td class="py-3 px-3 font-mono font-bold text-orange-600">${h.scoreOutOf10}/10 <span class="text-[10px] text-slate-400 font-normal">(${h.totalScore}đ)</span></td>
+                  <td class="py-3 px-3 text-emerald-600 font-semibold">${h.correctCount}/${h.total}</td>
+                  <td class="py-3 px-3 text-slate-700 font-medium">${h.rankTitle}</td>
+                  <td class="py-3 px-3 text-right text-slate-400">${h.date}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      clearLeaderboardHistory() {
+        if (!confirm('Bạn có chắc muốn xóa sạch lịch sử thành tích?')) return;
+        this.history = [];
+        this.saveHistory();
+        this.renderLeaderboard();
+      }
+    }
+
+    // Khởi tạo ứng dụng khi DOM tải xong
+    let app;
+    window.addEventListener('DOMContentLoaded', () => {
+      app = new QuizApp();
+      window.app = app;
+    });
+  </script>
+</body>
+</html>
